@@ -1,0 +1,108 @@
+version: '3.8'
+
+networks:
+  network:
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: web_nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./web:/var/www/html:delegated
+      - ./log:/var/log/nginx:delegated
+      - ./nginx/conf.d:/etc/nginx/conf.d:cached
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:cached
+    depends_on:
+      - php7.4
+      - php8.1
+    networks:
+      - network
+
+  mysql5.7:
+    image: mysql:5.7
+    container_name: mysql5.7
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - ./mysql:/var/lib/mysql:delegated
+      - ./mysql_init:/docker-entrypoint-initdb.d:cached
+    ports:
+      - "3306:3306"
+    environment:
+      # MYSQL_DATABASE: homestead
+      # MYSQL_USER: homestead
+      # MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    networks:
+      - network
+
+  redis6:
+    image: redis:6-alpine
+    container_name: redis6
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "6379:6379"
+    networks:
+      - network
+
+  php7.4:
+    user: ${USER_ID:-0}:${GROUP_ID:-0}
+    build:
+      context: .
+      dockerfile: php7.4.dockerfile
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+    image: "php7.4:dev"
+    container_name: "php7.4_dev"
+    restart: unless-stopped
+    volumes:
+      - ./web:/var/www/html:delegated
+      - ./log/php7.4:/var/log/php:delegated
+      - ./php/php7.4/conf.d/docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:cached
+      - ./php/php7.4/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini:cached
+    depends_on:
+      - mysql5.7
+      - redis6
+    #ports:
+    #  - "3000:3000"
+    #  - "4000:4000"
+    #  - "8000:8000"
+    #  - "9000:9000"
+    networks:
+      - network
+
+  php8.1:
+    user: ${USER_ID:-0}:${GROUP_ID:-0}
+    build:
+      context: .
+      dockerfile: php8.1.dockerfile
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+    image: "php8.1:dev"
+    container_name: "php8.1_dev"
+    restart: unless-stopped
+    volumes:
+      - ./web:/var/www/html:delegated
+      - ./log/php8.1:/var/log/php:delegated
+      - ./php/php8.1/conf.d/docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:cached
+      - ./php/php8.1/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini:cached
+    depends_on:
+      - mysql5.7
+      - redis6
+    #ports:
+    #  - "3001:3000"
+    #  - "4001:4000"
+    #  - "8001:8000"
+    #  - "9001:9000"
+    networks:
+      - network

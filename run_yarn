@@ -1,0 +1,9 @@
+#!/bin/bash
+CMD=$@
+WPATH=$(pwd)
+#PROJ="${WPATH##*/}"
+
+arr=(${WPATH//\/src\// })
+PROJ="${arr[1]}"
+
+docker-compose run --rm --user "$(id -u):$(id -g)" npm "yarn --cwd /var/www/html/$PROJ $CMD"

@@ -1,0 +1,6 @@
+protocol=https
+host=svn.bltcnetwork.com:28443
+path=r/php/laravel/firebee_api_service.git
+username=eric.li@bltcnetwork.com.tw
+password=
+

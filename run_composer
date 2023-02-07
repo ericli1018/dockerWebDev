@@ -1,0 +1,27 @@
+#!/bin/bash
+# export SYS_PHP_VER
+CMD=$@
+WPATH=$(pwd)
+#PROJ="${WPATH##*/}"
+
+arr=(${WPATH//\/web\// })
+PROJ="${arr[1]}"
+
+if [ -f ".env" ]; then
+    source ".env"
+    echo "SYS_PHP_VER=${SYS_PHP_VER}"
+fi
+
+#docker-compose run --rm --user "$(id -u):$(id -g)" composer $CMD -d /var/www/html/$PROJ
+CONTAIN_ID=""
+if [ "$SYS_PHP_VER" = "8.1" ]; then
+    CONTAIN_ID=$(docker ps -aqf "name=^php8.1_dev$")
+else
+    CONTAIN_ID=$(docker ps -aqf "name=^php7.4_dev$")
+fi
+
+if [ "$CONTAIN_ID" = "" ]; then
+    echo "Docker container is not exist or running."
+else
+    docker exec --user "$(id -u):$(id -g)" -it $CONTAIN_ID composer $CMD -d /var/www/html/$PROJ
+fi
