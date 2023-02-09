@@ -6,9 +6,9 @@ export default defineNuxtConfig({
     vite: {
         server: {
             hmr: {
-                clientPort: 8080,
                 port: 24678, // backend=24678, frontend=24679
-                protocol: 'ws',
+                clientPort: 8080, // non_ssl=8080, ssl=8443
+                protocol: 'ws', // non_ssl=ws, ssl=wss
             }
         },
     },

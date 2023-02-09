@@ -40,5 +40,8 @@ echo "}" >> "$NGCONFPATH"
 docker container restart web_nginx
 
 echo "Remember to add \"127.0.0.1 ${SRC}\" to the system host file at last line."
+echo "MySql database"
+echo "      location is \"mysql5.7\", "
+echo "      account is \"root\" and password is \"secret\"."
 
 echo "Finished."
