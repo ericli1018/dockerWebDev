@@ -84,6 +84,8 @@ services:
     user: ${USER_ID:-0}:${GROUP_ID:-0}
     build:
       context: .
+      extra_hosts:
+      - "hedian.awesome-tech.com.tw:172.21.0.6"
       dockerfile: php8.1.dockerfile
       args:
         USER_ID: ${USER_ID:-0}

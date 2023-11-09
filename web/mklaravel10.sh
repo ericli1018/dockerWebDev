@@ -17,7 +17,7 @@ fi
 
 mkdir -p "${SRC}"
 cd "${SRC}"
-../../run_composer create-project laravel/laravel="9.*" .
+../../run_composer create-project laravel/laravel="10.*" .
 ../../run_npm i
 touch ssl_cert.pem
 touch ssl_key.pem

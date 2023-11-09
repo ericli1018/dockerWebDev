@@ -68,7 +68,7 @@ RUN pecl install sqlsrv-5.10.0 \
 RUN pecl install pdo_sqlsrv-5.10.0 \
     && docker-php-ext-enable pdo_sqlsrv
 
-RUN apk add --update nodejs=16.20.0-r0
+RUN apk add --update nodejs=16.20.2-r0
 RUN apk add --update npm
 #RUN npm i -g @vue/cli
 #RUN npm i -g create-nuxt-app
