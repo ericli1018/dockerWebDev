@@ -26,5 +26,5 @@ else
     echo "/var/www/html/$PROJ"
     # docker exec --user "$(id -u):$(id -g)" -it $CONTAIN_ID sh -c "cd \"/var/www/html/$PROJ\" && npx $CMD"
     # --user "$(id -u):$(id -g)" 
-    docker exec -w "/var/www/html/$PROJ" -it $CONTAIN_ID npx $CMD
+    docker exec -w "/var/www/html/$PROJ" --user "$(id -u):$(id -g)" -it $CONTAIN_ID npx $CMD
 fi

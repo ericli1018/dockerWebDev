@@ -5,7 +5,9 @@
 
 To get started, make sure you have [Docker installed](https://docs.docker.com/docker-for-mac/install/) on your system, and then clone this repository.
 
-Next, navigate in your terminal to the directory you cloned this, and spin up the containers for the web server by running `docker-compose up -d --build nginx`.
+Make sure you have been created `.env` file from `.env.example` to specify current user's UID and GID.
+
+Next, navigate in your terminal to the directory you cloned this, and spin up the containers for the web server by running `docker-compose up -d --build`.
 
 After that completes, follow the steps from the [README.md](/README.md) file to get your Laravel project added in (or create a new blank one).
 
@@ -13,7 +15,9 @@ Bringing up the Docker Compose network with `nginx` instead of just using `up`, 
 
 - **nginx** - `:8080`
 - **nginx with ssl** - `:8443`
-- **mysql** - `:3306`
+- **mysql5.7** - `:3306`
+- **mysql8.0** - `:3307`
+- **mysql8.2** - `:3308`
 
 Three additional containers are included that handle Composer, NPM, and Artisan commands *without* having to have these platforms installed on your local computer. Use the following command examples from your project root, modifying them to fit your particular use case.
 
@@ -30,8 +34,9 @@ By default, whenever you bring down the Docker network, your MySQL data will be 
 
 ```
 volumes:
-  - ./mysql:/var/lib/mysql
+  - ./mysql/{sql_ver}:/var/lib/mysql
 ```
+sql_ver=8.2, 8.0, 5.7
 
 ## Store Git Password for vscode sync to git
 
@@ -71,6 +76,12 @@ cd ./web
 
 ```
 ./mklaravel9ApiNuxt3.sh <example.local>
+```
+
+### laravel10
+
+```
+./mklaravel10.sh <example.local>
 ```
 
 ### wordpress

@@ -26,7 +26,7 @@ else
     echo "/var/www/html/$PROJ"
     # docker exec --user "$(id -u):$(id -g)" -it $CONTAIN_ID sh -c "cd \"/var/www/html/$PROJ\" && npm $CMD --prefix \"/var/www/html/$PROJ\""
     # --user "$(id -u):$(id -g)"
-    docker exec -w "/var/www/html/$PROJ" -it $CONTAIN_ID npm $CMD
+    docker exec -w "/var/www/html/$PROJ" --user "$(id -u):$(id -g)" -it $CONTAIN_ID npm $CMD
 fi
 
 
