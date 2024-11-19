@@ -34,6 +34,8 @@ cd "${SRC}"
 
 mkdir .vscode
 cp -a ../../.vscode/src.vscode.launch.json .vscode/launch.json
+cp -a ../../.vscode/src.vscode.settings.json .vscode/settings.json
+sed -i 's/<docker-container>/php8.1_dev/g' .vscode/settings.json
 
 # wordpress
 wget https://tw.wordpress.org/latest-zh_TW.tar.gz

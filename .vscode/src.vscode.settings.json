@@ -1,3 +1,4 @@
 {
+    "nuxt.isNuxtApp": false,
     "php.validate.executablePath": "run_php"
 }
