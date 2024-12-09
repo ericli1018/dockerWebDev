@@ -19,6 +19,9 @@ fi
 
 DBNAME=$(echo "wp_$SRC" | sed s/[.]/_/g)
 
+mkdir -p "${SRC}"
+cd "${SRC}"
+
 mkdir .vscode
 cp -a ../../.vscode/src.vscode.launch.json .vscode/launch.json
 cp -a ../../.vscode/src.vscode.settings.json .vscode/settings.json
