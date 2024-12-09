@@ -12,19 +12,15 @@ if [ -f ".env" ]; then
     echo "SYS_PHP_VER=${SYS_PHP_VER}"
 fi
 
-#docker-compose run --rm --user "$(id -u):$(id -g)" composer $CMD -d /var/www/html/$PROJ
 CONTAIN_ID=""
-if [ "$SYS_PHP_VER" = "8.1" ]; then
-    CONTAIN_ID=$(docker ps -aqf "name=^php8.1_dev$")
-else
-    CONTAIN_ID=$(docker ps -aqf "name=^php7.4_dev$")
+if [ "$SYS_PHP_VER" = "" ]; then
+    SYS_PHP_VER="7.4"
 fi
+CONTAIN_ID=$(docker ps -aqf "name=^php${SYS_PHP_VER}_dev$")
 
 if [ "$CONTAIN_ID" = "" ]; then
     echo "Docker container is not exist or running."
 else
-    echo "/var/www/html/$PROJ"
-    # docker exec --user "$(id -u):$(id -g)" -it $CONTAIN_ID sh -c "cd \"/var/www/html/$PROJ\" && npx $CMD"
-    # --user "$(id -u):$(id -g)" 
+    echo "PROJ_PATH=/var/www/html/$PROJ"
     docker exec -w "/var/www/html/$PROJ" --user "$(id -u):$(id -g)" -it $CONTAIN_ID npx $CMD
 fi

@@ -1,27 +1,9 @@
-version: '3.8'
+# Docker Web Dev Env
 
 networks:
   network:
 
 services:
-  nginx:
-    image: nginx:stable-alpine
-    container_name: web_nginx
-    restart: unless-stopped
-    ports:
-      - "8080:80"
-      - "8443:443"
-    volumes:
-      - ./web:/var/www/html:delegated
-      - ./log:/var/log/nginx:delegated
-      - ./nginx/conf.d:/etc/nginx/conf.d:cached
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:cached
-    depends_on:
-      - php7.4
-      - php8.1
-    networks:
-      - network
-
   mysql8.2:
     image: mysql:8.2
     container_name: mysql8.2
@@ -116,11 +98,6 @@ services:
       - mysql8.0
       - mysql5.7
       - redis6
-    #ports:
-    #  - "3000:3000"
-    #  - "4000:4000"
-    #  - "8000:8000"
-    #  - "9000:9000"
     networks:
       - network
 
@@ -128,8 +105,6 @@ services:
     user: ${USER_ID:-0}:${GROUP_ID:-0}
     build:
       context: .
-      extra_hosts:
-      - "hedian.awesome-tech.com.tw:172.21.0.6"
       dockerfile: php8.1.dockerfile
       args:
         USER_ID: ${USER_ID:-0}
@@ -147,10 +122,48 @@ services:
       - mysql8.0
       - mysql5.7
       - redis6
-    #ports:
-    #  - "3001:3000"
-    #  - "4001:4000"
-    #  - "8001:8000"
-    #  - "9001:9000"
+    networks:
+      - network
+
+  php8.3:
+    user: ${USER_ID:-0}:${GROUP_ID:-0}
+    build:
+      context: .
+      dockerfile: php8.3.dockerfile
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+    image: "php8.3:dev"
+    container_name: "php8.3_dev"
+    restart: unless-stopped
+    volumes:
+      - ./web:/var/www/html:delegated
+      - ./log/php8.3:/var/log/php:delegated
+      - ./php/php8.3/conf.d/docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:cached
+      - ./php/php8.3/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini:cached
+    depends_on:
+      - mysql8.2
+      - mysql8.0
+      - mysql5.7
+      - redis6
+    networks:
+      - network
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: web_nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./web:/var/www/html:delegated
+      - ./log:/var/log/nginx:delegated
+      - ./nginx/conf.d:/etc/nginx/conf.d:cached
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:cached
+    depends_on:
+      - php7.4
+      - php8.1
+      - php8.3
     networks:
       - network

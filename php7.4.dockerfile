@@ -1,4 +1,4 @@
-FROM php:7.4-fpm-alpine
+FROM php:7.4.33-fpm-alpine
 
 ARG USER_ID
 ARG GROUP_ID
@@ -28,8 +28,10 @@ RUN apk add --allow-untrusted mssql-tools18_18.0.1.1-1_amd64.apk
 RUN rm msodbcsql18_18.0.1.1-1_amd64.apk
 RUN rm mssql-tools18_18.0.1.1-1_amd64.apk
 
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
+
 RUN apk update \
-    && apk add --no-cache gettext-dev libwebp-dev zlib-dev libxpm-dev freetype-dev libjpeg-turbo-dev libpng-dev libxml2-dev libzip-dev bzip2-dev unixodbc-dev libmemcached-dev libstdc++ openssl-dev gcc g++ make autoconf \
+    && apk add --no-cache gettext-dev libwebp-dev zlib-dev icu-dev libxpm-dev freetype-dev libjpeg-turbo-dev libpng-dev libxml2-dev libzip-dev bzip2-dev unixodbc-dev libmemcached-dev libstdc++ openssl-dev gcc g++ make autoconf \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-configure sockets \
@@ -51,7 +53,10 @@ RUN apk update \
     && docker-php-ext-configure pcntl \
     && docker-php-ext-install -j$(nproc) pcntl \
     && docker-php-ext-configure opcache \
-    && docker-php-ext-install -j$(nproc) opcache
+    && docker-php-ext-install -j$(nproc) opcache \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install -j$(nproc) intl \
+    && docker-php-ext-enable intl
 
 RUN pecl install redis \
     && docker-php-ext-enable redis
@@ -70,6 +75,7 @@ RUN pecl install pdo_sqlsrv-5.10.0 \
 
 RUN apk add --update nodejs=16.20.2-r0
 RUN apk add --update npm
+RUN apk add --update yarn
 #RUN npm i -g @vue/cli
 #RUN npm i -g create-nuxt-app
 #RUN npm i -g pm2
