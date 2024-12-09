@@ -78,6 +78,7 @@ RUN pecl install pdo_sqlsrv-5.10.0 \
 RUN apk add --update nodejs=20.15.1-r0
 RUN apk add --update npm
 RUN apk add --update yarn
+RUN apk add --update mysql-client mariadb-connector-c-dev
 #RUN npm i -g @vue/cli
 #RUN npm i -g create-nuxt-app
 #RUN npm i -g pm2

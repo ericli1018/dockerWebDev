@@ -1,7 +1,9 @@
 #!/bin/bash
 
 SYS_PHP_VER=8.1
+SYS_MYSQL_VER=8.0
 export SYS_PHP_VER
+export SYS_MYSQL_VER
 
 SRC=$1
 
@@ -15,6 +17,8 @@ if [ -d "${SRC}" ]; then
   exit
 fi
 
+DBNAME=$(echo "laravel_$SRC" | sed s/[.]/_/g)
+
 mkdir -p "${SRC}"
 cd "${SRC}"
 ../../run_composer create-project laravel/laravel="9.*" .
@@ -22,11 +26,11 @@ cd "${SRC}"
 touch ssl_cert.pem
 touch ssl_key.pem
 sed -i "s/APP_URL=http:\/\/localhost/APP_URL=http:\/\/${SRC}/gi" .env
-sed -i 's/DB_HOST=127.0.0.1/DB_HOST=mysql5.7/gi' .env
+sed -i "s/DB_HOST=127.0.0.1/DB_HOST=mysql${SYS_MYSQL_VER}/gi" .env
 sed -i 's/DB_PASSWORD=/DB_PASSWORD=secret/gi' .env
 sed -i 's/REDIS_HOST=127.0.0.1/REDIS_HOST=redis6/gi' .env
 echo "# SYSTEM PHP VERSION" >> .env
-echo "SYS_PHP_VER=8.1" >> .env
+echo "SYS_PHP_VER=${SYS_PHP_VER}" >> .env
 cp -a .env .env.example
 
 ln -s ../../run_* .
@@ -34,14 +38,15 @@ ln -s ../../run_* .
 mkdir .vscode
 cp -a ../../.vscode/src.vscode.launch.json .vscode/launch.json
 cp -a ../../.vscode/src.vscode.settings.json .vscode/settings.json
+sed -i "s/<docker-container>/php${SYS_PHP_VER}_dev/g" .vscode/settings.json
 
 # backend nuxt
 ./run_npx --y nuxi init resources/backend
 cp -a ../../nuxt3_init/backend.nuxt.config.ts resources/backend/nuxt.config.ts
 echo "# SYSTEM PHP VERSION" > resources/backend/.env
-echo "SYS_PHP_VER=8.1" >> resources/backend/.env
+echo "SYS_PHP_VER=${SYS_PHP_VER}" >> resources/backend/.env
 echo "# SYSTEM PHP VERSION" > resources/backend/.env.example
-echo "SYS_PHP_VER=8.1" >> resources/backend/.env.example
+echo "SYS_PHP_VER=${SYS_PHP_VER}" >> resources/backend/.env.example
 ln -s ../../run_npm resources/backend/
 cd resources/backend
 ./run_npm i
@@ -52,9 +57,9 @@ cd ../../
 ./run_npx --y nuxi init resources/frontend
 cp -a ../../nuxt3_init/frontend.nuxt.config.ts resources/frontend/nuxt.config.ts
 echo "# SYSTEM PHP VERSION" > resources/frontend/.env
-echo "SYS_PHP_VER=8.1" >> resources/frontend/.env
+echo "SYS_PHP_VER=${SYS_PHP_VER}" >> resources/frontend/.env
 echo "# SYSTEM PHP VERSION" > resources/frontend/.env.example
-echo "SYS_PHP_VER=8.1" >> resources/frontend/.env.example
+echo "SYS_PHP_VER=${SYS_PHP_VER}" >> resources/frontend/.env.example
 ln -s ../../run_npm resources/frontend/
 cd resources/frontend
 ./run_npm i
@@ -73,7 +78,7 @@ echo "    #ssl_certificate_key /var/www/html/${SRC}/ssl_key.pem;" >> "$NGCONFPAT
 echo "    error_log  /var/log/nginx/error.${SRC}.log;" >> "$NGCONFPATH"
 echo "    access_log /var/log/nginx/access.${SRC}.log;" >> "$NGCONFPATH"
 echo "    root /var/www/html/${SRC}/public;" >> "$NGCONFPATH"
-echo "    include /etc/nginx/conf.d/inc/php8.1_laravelApiNuxt3.conf;" >> "$NGCONFPATH"
+echo "    include /etc/nginx/conf.d/inc/php${SYS_PHP_VER}_laravelApiNuxt3.conf;" >> "$NGCONFPATH"
 echo "}" >> "$NGCONFPATH"
 
 # nginx restart

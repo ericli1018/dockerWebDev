@@ -1,18 +1,14 @@
 #!/bin/bash
 
 SYS_PHP_VER=8.1
+SYS_MYSQL_VER=8.0
 export SYS_PHP_VER
+export SYS_MYSQL_VER
 
 SRC=$1
-DBNAME=$2
 
 if [ "$SRC" = "" ]; then
   echo "Folder can not empty"
-  exit
-fi
-
-if [ "$DBNAME" = "" ]; then
-  echo "DBNAME can not empty"
   exit
 fi
 
@@ -21,21 +17,12 @@ if [ -d "${SRC}" ]; then
   exit
 fi
 
-CONTAIN_ID=$(docker ps -aqf "name=^mysql5.7$")
-if [ "$CONTAIN_ID" = "" ]; then
-    echo "Docker container is not exist or running."
-    exit
-else
-    docker exec -it $CONTAIN_ID mysql --password=secret -e "create database if not exists ${DBNAME}"
-fi
-
-mkdir -p "${SRC}"
-cd "${SRC}"
+DBNAME=$(echo "wp_$SRC" | sed s/[.]/_/g)
 
 mkdir .vscode
 cp -a ../../.vscode/src.vscode.launch.json .vscode/launch.json
 cp -a ../../.vscode/src.vscode.settings.json .vscode/settings.json
-sed -i 's/<docker-container>/php8.1_dev/g' .vscode/settings.json
+sed -i 's/<docker-container>/php${SYS_PHP_VER}_dev/g' .vscode/settings.json
 
 # wordpress
 wget https://tw.wordpress.org/latest-zh_TW.tar.gz
@@ -54,15 +41,18 @@ echo "    #ssl_certificate_key /var/www/html/${SRC}/ssl_key.pem;" >> "$NGCONFPAT
 echo "    error_log  /var/log/nginx/error.${SRC}.log;" >> "$NGCONFPATH"
 echo "    access_log /var/log/nginx/access.${SRC}.log;" >> "$NGCONFPATH"
 echo "    root /var/www/html/${SRC};" >> "$NGCONFPATH"
-echo "    include /etc/nginx/conf.d/inc/php8.1_wordpress.conf;" >> "$NGCONFPATH"
+echo "    include /etc/nginx/conf.d/inc/php${SYS_PHP_VER}_wordpress.conf;" >> "$NGCONFPATH"
 echo "}" >> "$NGCONFPATH"
+
+# create database
+./run_mysql -uroot -psecret -hmysql${SYS_MYSQL_VER} -e "'CREATE DATABASE \`$DBNAME\`;'"
 
 # nginx restart
 docker container restart web_nginx
 
 echo "Remember to add \"127.0.0.1 ${SRC}\" to the system host file at last line."
 echo "MySql database name is \"${DBNAME}\", "
-echo "      location is \"mysql5.7\", "
+echo "      location is \"mysql${SYS_MYSQL_VER}\", "
 echo "      account is \"root\" and password is \"secret\"."
 
 echo "Finished."

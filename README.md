@@ -19,11 +19,16 @@ Bringing up the Docker Compose network with `nginx` instead of just using `up`, 
 - **mysql8.0** - `:3307`
 - **mysql8.2** - `:3308`
 
-Three additional containers are included that handle Composer, NPM, and Artisan commands *without* having to have these platforms installed on your local computer. Use the following command examples from your project root, modifying them to fit your particular use case.
+Three additional containers are included that handle Composer, NPM, NPX, YARN, PHP, and Artisan commands *without* having to have these platforms installed on your local computer. Use the following command examples from your project root, modifying them to fit your particular use case.
+Using .env variable `SYS_PHP_VER` to specify PHP version. PHP support version 8.3, 8,1 and 7.4(default).
+Example for php version 8.1 is `echo "SYS_PHP_VER=8.1" >> .env`.
 
 - `./run_composer update`
 - `./run_npm run dev`
-- `./run_artisan migrate` 
+- `./run_npx --version`
+- `./run_php --version`
+- `./run_artisan migrate`
+- `./run_yarn --version`
 
 ## Persistent MySQL Storage
 
@@ -127,6 +132,18 @@ server {
     access_log /var/log/nginx/access.<example.local>.log;
     root /var/www/html/example.local/public;
     include /etc/nginx/conf.d/inc/php8.1_laravelApiNuxt3.conf;
+}
+```
+
+## Use PHP Intelephone
+
+In each project folder (./web/<example.local>), create `./web/<example.local>/.vscode/settings.json` file and add the following script.
+
+```
+{
+    ...
+    "php.validate.executablePath": "run_php"
+    ...
 }
 ```
 

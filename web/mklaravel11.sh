@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SYS_PHP_VER=8.1
+SYS_PHP_VER=8.3
 SYS_MYSQL_VER=8.0
 export SYS_PHP_VER
 export SYS_MYSQL_VER
@@ -21,14 +21,18 @@ DBNAME=$(echo "laravel_$SRC" | sed s/[.]/_/g)
 
 mkdir -p "${SRC}"
 cd "${SRC}"
-../../run_composer create-project laravel/laravel="10.*" .
+../../run_composer create-project laravel/laravel="11.*" .
 ../../run_npm i
 touch ssl_cert.pem
 touch ssl_key.pem
 sed -i "s/APP_URL=http:\/\/localhost/APP_URL=http:\/\/${SRC}/gi" .env
-sed -i "s/DB_HOST=127.0.0.1/DB_HOST=mysql${SYS_MYSQL_VER}/gi" .env
-sed -i 's/DB_PASSWORD=/DB_PASSWORD=secret/gi' .env
-sed -i 's/REDIS_HOST=127.0.0.1/REDIS_HOST=redis6/gi' .env
+sed -i "s/DB_CONNECTION=sqlite/DB_CONNECTION=mysql/gi" .env
+sed -i "s/# DB_HOST=127.0.0.1/DB_HOST=mysql${SYS_MYSQL_VER}/gi" .env
+sed -i "s/# DB_PORT=3306/DB_PORT=3306/gi" .env
+sed -i "s/# DB_DATABASE=laravel/DB_DATABASE=${DBNAME}/gi" .env
+sed -i "s/# DB_USERNAME=root/DB_USERNAME=root/gi" .env
+sed -i "s/# DB_PASSWORD=/DB_PASSWORD=secret/gi" .env
+sed -i "s/REDIS_HOST=127.0.0.1/REDIS_HOST=redis6/gi" .env
 echo "# SYSTEM PHP VERSION" >> .env
 echo "SYS_PHP_VER=${SYS_PHP_VER}" >> .env
 cp -a .env .env.example

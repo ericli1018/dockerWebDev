@@ -1,0 +1,27 @@
+#!/bin/bash
+# export SYS_PHP_VER
+CMD=$@
+WPATH=$(pwd)
+#PROJ="${WPATH##*/}"
+
+arr=(${WPATH//\/web\// })
+PROJ="${arr[1]}"
+
+if [ -f ".env" ]; then
+    source ".env"
+    echo "SYS_PHP_VER=${SYS_PHP_VER}"
+fi
+
+CONTAIN_ID=""
+if [ "$SYS_PHP_VER" = "" ]; then
+    SYS_PHP_VER="7.4"
+fi
+CONTAIN_ID=$(docker ps -aqf "name=^php${SYS_PHP_VER}_dev$")
+
+if [ "$CONTAIN_ID" = "" ]; then
+    echo "Docker container is not exist or running."
+else
+    echo "PROJ_PATH=/var/www/html/$PROJ"
+    echo "CMD=$CMD"
+    docker exec -w "/var/www/html/$PROJ" --user "$(id -u):$(id -g)" -it $CONTAIN_ID sh -c "(mysql $CMD)"
+fi
