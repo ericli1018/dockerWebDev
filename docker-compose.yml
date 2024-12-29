@@ -1,7 +1,7 @@
 # Docker Web Dev Env
 
 networks:
-  network:
+  web-dev-network:
 
 services:
   mysql8.2:
@@ -23,7 +23,7 @@ services:
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql8.2
     networks:
-      - network
+      - web-dev-network
 
   mysql8.0:
     image: mysql:8.0
@@ -44,7 +44,7 @@ services:
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql8.0
     networks:
-      - network
+      - web-dev-network
 
   mysql5.7:
     image: mysql:5.7
@@ -65,7 +65,7 @@ services:
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql5.7
     networks:
-      - network
+      - web-dev-network
 
   redis6:
     image: redis:6-alpine
@@ -75,7 +75,7 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - network
+      - web-dev-network
 
   php7.4:
     user: ${USER_ID:-0}:${GROUP_ID:-0}
@@ -93,13 +93,14 @@ services:
       - ./log/php7.4:/var/log/php:delegated
       - ./php/php7.4/conf.d/docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:cached
       - ./php/php7.4/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini:cached
+      - ./php/php7.4/conf.d/docker-php.ini:/usr/local/etc/php/conf.d/docker-php.ini:cached
     depends_on:
       - mysql8.2
       - mysql8.0
       - mysql5.7
       - redis6
     networks:
-      - network
+      - web-dev-network
 
   php8.1:
     user: ${USER_ID:-0}:${GROUP_ID:-0}
@@ -117,13 +118,16 @@ services:
       - ./log/php8.1:/var/log/php:delegated
       - ./php/php8.1/conf.d/docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:cached
       - ./php/php8.1/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini:cached
+      - ./php/php8.1/conf.d/docker-php.ini:/usr/local/etc/php/conf.d/docker-php.ini:cached
     depends_on:
       - mysql8.2
       - mysql8.0
       - mysql5.7
       - redis6
     networks:
-      - network
+      - web-dev-network
+    extra_hosts:
+      - wp-cb.local:192.168.100.10
 
   php8.3:
     user: ${USER_ID:-0}:${GROUP_ID:-0}
@@ -141,13 +145,14 @@ services:
       - ./log/php8.3:/var/log/php:delegated
       - ./php/php8.3/conf.d/docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:cached
       - ./php/php8.3/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini:cached
+      - ./php/php8.3/conf.d/docker-php.ini:/usr/local/etc/php/conf.d/docker-php.ini:cached
     depends_on:
       - mysql8.2
       - mysql8.0
       - mysql5.7
       - redis6
     networks:
-      - network
+      - web-dev-network
 
   nginx:
     image: nginx:stable-alpine
@@ -166,4 +171,6 @@ services:
       - php8.1
       - php8.3
     networks:
-      - network
+      web-dev-network:
+        aliases:
+          - wp-cb.local
