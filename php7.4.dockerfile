@@ -1,4 +1,4 @@
-FROM php:7.4.33-fpm-alpine
+FROM php:7.4-fpm-alpine
 
 ARG USER_ID
 ARG GROUP_ID
@@ -73,7 +73,8 @@ RUN pecl install sqlsrv-5.10.0 \
 RUN pecl install pdo_sqlsrv-5.10.0 \
     && docker-php-ext-enable pdo_sqlsrv
 
-RUN apk add --update nodejs=16.20.2-r0
+RUN apk add --update nodejs
+RUN mkdir -p /.npm && chmod -R 777 /.npm
 RUN apk add --update npm
 RUN apk add --update yarn
 RUN apk add --update mysql-client mariadb-connector-c-dev

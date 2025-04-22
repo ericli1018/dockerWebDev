@@ -48,7 +48,7 @@ echo "    include /etc/nginx/conf.d/inc/php${SYS_PHP_VER}_wordpress.conf;" >> "$
 echo "}" >> "$NGCONFPATH"
 
 # create database
-./run_mysql -uroot -psecret -hmysql${SYS_MYSQL_VER} -e "'CREATE DATABASE \`$DBNAME\`;'"
+./run_mysql -uroot -psecret --skip-ssl -hmysql${SYS_MYSQL_VER} -e "'CREATE DATABASE \`$DBNAME\`;'"
 
 # nginx restart
 docker container restart web_nginx

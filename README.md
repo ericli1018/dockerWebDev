@@ -89,6 +89,18 @@ cd ./web
 ./mklaravel10.sh <example.local>
 ```
 
+### laravel11
+
+```
+./mklaravel11.sh <example.local>
+```
+
+### laravel12
+
+```
+./mklaravel10.sh <example.local>
+```
+
 ### wordpress
 
 ```

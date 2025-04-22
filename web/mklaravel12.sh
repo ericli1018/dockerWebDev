@@ -21,7 +21,7 @@ DBNAME=$(echo "laravel_$SRC" | sed s/[.]/_/g)
 
 mkdir -p "${SRC}"
 cd "${SRC}"
-../../run_composer create-project laravel/laravel="11.*" .
+../../run_composer create-project laravel/laravel="12.*" .
 ../../run_npm i
 touch ssl_cert.pem
 touch ssl_key.pem
@@ -61,7 +61,7 @@ echo "}" >> "$NGCONFPATH"
 
 # create database
 ./run_mysql -uroot -psecret --skip-ssl -hmysql${SYS_MYSQL_VER} -e "'CREATE DATABASE \`$DBNAME\`;'"
-./run_artisan migrate
+./run_artisan migrate`
 
 # nginx restart
 docker container restart web_nginx
