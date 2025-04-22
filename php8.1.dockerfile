@@ -17,6 +17,7 @@ RUN if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
     ;fi 
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
+RUN mkdir -p /.composer; chmod 777 /.composer
 
 WORKDIR /var/www/html
 RUN echo "UTC" > /etc/timezone
