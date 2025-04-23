@@ -126,8 +126,6 @@ services:
       - redis6
     networks:
       - web-dev-network
-    extra_hosts:
-      - wp-cb.local:192.168.100.10
 
   php8.3:
     user: ${USER_ID:-0}:${GROUP_ID:-0}

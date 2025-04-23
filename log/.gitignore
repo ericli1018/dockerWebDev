@@ -1,4 +1,5 @@
 *
 !/php7.4/
 !/php8.1/
+!/php8.3/
 !.gitignore

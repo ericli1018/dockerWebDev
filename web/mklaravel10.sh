@@ -27,6 +27,7 @@ touch ssl_cert.pem
 touch ssl_key.pem
 sed -i "s/APP_URL=http:\/\/localhost/APP_URL=http:\/\/${SRC}/gi" .env
 sed -i "s/DB_HOST=127.0.0.1/DB_HOST=mysql${SYS_MYSQL_VER}/gi" .env
+sed -i "s/DB_DATABASE=laravel/DB_DATABASE=${DBNAME}/gi" .env
 sed -i 's/DB_PASSWORD=/DB_PASSWORD=secret/gi' .env
 sed -i 's/REDIS_HOST=127.0.0.1/REDIS_HOST=redis6/gi' .env
 echo "# SYSTEM PHP VERSION" >> .env
